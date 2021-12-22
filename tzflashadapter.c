@@ -41,10 +41,10 @@ bool TZFlashAdapterLoad(char* partitionName) {
     return TZFlashLoad(PAGE_SIZE, ALIGN_NUM, eraseFlash, writeFlash, readFlash);
 }
 
-// eraseFlash 擦除flash
+// TZFlashEraseFlash 擦除flash
 // addr:起始地址.size:擦除字节数
 // 成功返回true,失败返回false
-static bool eraseFlash(uint32_t addr, int size) {
+bool TZFlashEraseFlash(uint32_t addr, int size) {
     const esp_partition_t *partition = esp_partition_find_first(ESP_PARTITION_TYPE_DATA, 
         ESP_PARTITION_SUBTYPE_ANY, gPartitionName);
     if (partition == NULL) {
@@ -57,10 +57,10 @@ static bool eraseFlash(uint32_t addr, int size) {
     return esp_partition_erase_range(partition, addr, size) == ESP_OK;
 }
 
-// writeFlash 写入flash
+// TZFlashWriteFlash 写入flash
 // addr:起始地址.bytes:待写入的字节流.size:写入字节数
 // 成功返回true,失败返回false
-static bool writeFlash(uint32_t addr, uint8_t* bytes, int size) {
+bool TZFlashWriteFlash(uint32_t addr, uint8_t* bytes, int size) {
     const esp_partition_t *partition = esp_partition_find_first(ESP_PARTITION_TYPE_DATA, 
         ESP_PARTITION_SUBTYPE_ANY, gPartitionName);
     if (partition == NULL) {
@@ -73,10 +73,10 @@ static bool writeFlash(uint32_t addr, uint8_t* bytes, int size) {
     return esp_partition_write(partition, addr, bytes, size) == ESP_OK;
 }
 
-// readFlash 读取flash
+// TZFlashReadFlash 读取flash
 // addr:起始地址.bytes:读取的字节流存放的缓存.size:读取的字节数
 // 成功返回true,失败返回false
-static bool readFlash(uint32_t addr, uint8_t* bytes, int size) {
+bool TZFlashReadFlash(uint32_t addr, uint8_t* bytes, int size) {
     const esp_partition_t *partition = esp_partition_find_first(ESP_PARTITION_TYPE_DATA, 
         ESP_PARTITION_SUBTYPE_ANY, gPartitionName);
     if (partition == NULL) {
