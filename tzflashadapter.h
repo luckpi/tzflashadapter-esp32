@@ -11,13 +11,13 @@
 // TZFlashAdapterLoad 模块载入.partitionName是分区名
 bool TZFlashAdapterLoad(char* partitionName);
 
-// TZFlashEraseFlash 擦除flash
-bool TZFlashEraseFlash(uint32_t addr, int size);
+// TZFlashAdapterErase 擦除flash
+bool TZFlashAdapterErase(uint32_t addr, int size);
 
-// TZFlashWriteFlash 写入flash
-bool TZFlashWriteFlash(uint32_t addr, uint8_t* bytes, int size);
+// TZFlashAdapterWrite 写入flash
+bool TZFlashAdapterWrite(uint32_t addr, uint8_t* bytes, int size);
 
-// TZFlashReadFlash 读取flash
-bool TZFlashReadFlash(uint32_t addr, uint8_t* bytes, int size);
+// TZFlashAdapterRead 读取flash
+bool TZFlashAdapterRead(uint32_t addr, uint8_t* bytes, int size);
 
 #endif
