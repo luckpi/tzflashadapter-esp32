@@ -16,7 +16,7 @@
 
 #define TAG "tzflashadapter"
 
-#define MALLOC_SIZE 8192
+#define MALLOC_SIZE 4096
 
 #define PAGE_SIZE 4096
 #define ALIGN_NUM 1
@@ -26,7 +26,7 @@
 
 #define AES_BLOCK_SIZE 16
 
-static int mid = -1;
+static int gMid = -1;
 
 static char gPartitionName[PARTITION_NAME_LEN_MAX] = {0};
 
@@ -38,28 +38,11 @@ static bool encryptData(const esp_partition_t *partition, uint32_t addr, const u
 static bool decryptData(const esp_partition_t *partition, uint32_t addr, uint8_t *out, int outLen);
 
 // TZFlashAdapterLoad 模块载入.partitionName是分区名
-bool TZFlashAdapterLoad(TZFlashAdapterParam *param) {
-    if (strlen(param->PartitionName) > PARTITION_NAME_LEN_MAX - 1) {
+bool TZFlashAdapterLoad(char* partitionName) {
+    if (strlen(partitionName) > PARTITION_NAME_LEN_MAX - 1) {
         return false;
     }
-    strcpy(gPartitionName, param->PartitionName);
-
-    if (param->EncryptType == TZFLASHADAPTER_ENCRYPT_AES) {
-        gEncryptType = param->EncryptType;
-
-        if (param->EncryptKeyLen > ENCRYPT_KEY_LEN_MAX) {
-            LE(TAG, "load failed!encrypt key len error");
-            return false;
-        }
-        memcpy(gEncryptKey, param->EncryptKey, param->EncryptKeyLen);
-        gEncryptKeyLen = param->EncryptKeyLen;
-
-        mid = TZMallocRegister(0, TAG, MALLOC_SIZE);
-        if (mid == -1) {
-            LE(TAG, "load failed!malloc register failed");
-            return false;
-        }
-    }
+    strcpy(gPartitionName, partitionName);
 
     return TZFlashLoad(PAGE_SIZE, ALIGN_NUM, TZFlashAdapterErase, TZFlashAdapterWrite, TZFlashAdapterRead);
 }
@@ -119,7 +102,7 @@ static bool encryptData(const esp_partition_t *partition, uint32_t addr, const u
         return false;
     }
 
-    TZBufferDynamic *buffer = TZMalloc(mid, sizeof(TZBufferDynamic) + len);
+    TZBufferDynamic *buffer = TZMalloc(gMid, sizeof(TZBufferDynamic) + len);
     if (buffer == NULL) {
         LE(TAG, "encrypt data failed!malloc buffer failed");
         return false;
@@ -208,7 +191,7 @@ static bool decryptData(const esp_partition_t *partition, uint32_t addr, uint8_t
         return false;
     }
 
-    TZBufferDynamic *buffer = TZMalloc(mid, sizeof(TZBufferDynamic) + len);
+    TZBufferDynamic *buffer = TZMalloc(gMid, sizeof(TZBufferDynamic) + len);
     if (buffer == NULL) {
         LE(TAG, "decrypt data failed!decrypt data failed");
         return false;
@@ -256,9 +239,9 @@ bool TZFlashAdapterEnableEncrypt(TZFlashAdapterEncryptType type, uint8_t *key, u
         return false;
     }
 
-    if (mid == -1) {
-        mid = TZMallocRegister(0, TAG, MALLOC_SIZE);
-        if (mid == -1) {
+    if (gMid == -1) {
+        gMid = TZMallocRegister(0, TAG, MALLOC_SIZE);
+        if (gMid == -1) {
             LE(TAG, "load failed!malloc register failed");
             return false;
         }

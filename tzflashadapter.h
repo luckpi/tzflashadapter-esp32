@@ -21,7 +21,7 @@ typedef struct {
 } TZFlashAdapterParam;
 
 // TZFlashAdapterLoad 模块载入.partitionName是分区名
-bool TZFlashAdapterLoad(TZFlashAdapterParam *param);
+bool TZFlashAdapterLoad(char* partitionName);
 
 // TZFlashAdapterErase 擦除flash
 bool TZFlashAdapterErase(uint32_t addr, int size);
